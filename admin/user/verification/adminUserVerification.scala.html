@@ -1,0 +1,79 @@
+@import admin.common._
+@import admin.layout._
+
+@()
+
+@modals = {
+	@adminUserVerificationModal()
+	@adminBasicUserActionModals()
+}
+
+@adminDefaultLayout(
+	breadcrumb = Array(
+		("User Verification", routes.AdminController.showUserVerification().url) 
+	),
+	pageScripts = Array("app/admin/user/verification/adminUserVerificationController"),
+	modals = modals) {
+	
+	<div class="panel user-verification-data-table">
+	    <ul class="nav nav-tabs nav-tabs-simple" role="tablist" data-init-reponsive-tabs="collapse">
+	      <li class="active"><a href="#tab-unscheduled" data-toggle="tab" role="tab"><i class="fa fa-phone p-r-5"></i> @Messages("admin.users.verification.unscheduled")</a>
+	      </li>
+	      <li><a href="#tab-scheduled" data-toggle="tab" role="tab"><i class="fa fa-calendar p-r-5"></i> @Messages("admin.users.verification.scheduled")</a>
+	      </li>
+	      <li><a href="#tab-awaiting-documents" data-toggle="tab" role="tab"><i class="fa fa-folder-open p-r-5"></i> @Messages("admin.users.verification.awaitingdocs")</a>
+	      </li>
+	    </ul>
+	    <div class="tab-content">
+	      <div class="tab-pane active" id="tab-unscheduled">
+	        <div class="row">
+	          <div class="col-md-12">
+                <div class="pull-right">
+                  <div class="col-xs-12">
+                  	<div class="form-inline">
+                  		<button type="button" class="btn btn-default action-refresh m-r-5"><i class="pg-refresh"></i></button>
+                    	<input type="text" class="form-control pull-right data-table-search" placeholder="Search">
+                    </div>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+				<table class="table table-hover table-condensed data-table" cellspacing="0" width="100%"></table>
+	          </div>
+	        </div>
+	      </div>
+	      <div class="tab-pane " id="tab-scheduled">
+	        <div class="row">
+	          <div class="col-md-12">
+                <div class="pull-right">
+                  <div class="col-xs-12">
+                    <div class="form-inline">
+                  		<button type="button" class="btn btn-default action-refresh m-r-5"><i class="pg-refresh"></i></button>
+                    	<input type="text" class="form-control pull-right data-table-search" placeholder="Search">
+                    </div>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+				<table class="table table-hover table-condensed data-table" cellspacing="0" width="100%"></table>
+	          </div>
+	        </div>
+	      </div>
+	      <div class="tab-pane" id="tab-awaiting-documents">
+	        <div class="row">
+	          <div class="col-md-12">
+                <div class="pull-right">
+                  <div class="col-xs-12">
+                    <div class="form-inline">
+                  		<button type="button" class="btn btn-default action-refresh m-r-5"><i class="pg-refresh"></i></button>
+                    	<input type="text" class="form-control pull-right data-table-search" placeholder="Search">
+                    </div>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+				<table class="table table-hover table-condensed data-table" cellspacing="0" width="100%"></table>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	
+}

@@ -1,0 +1,10 @@
+@(name: String, label: String, args: (Symbol,Any)*)
+
+@defining(args.toMap) {argsMap =>
+
+	<dl>
+		<dt>@label</dt>
+		<dd data-knb-admin-output-type="date" data-knb-admin-output-field="@name" data-knb-admin-output-format="@argsMap.get('format).getOrElse("ddd, MMM DD, HH:mm").toString" data-knb-admin-output-default-value="@argsMap.get('defaultValue).getOrElse("-").toString"></dd>
+	</dl>
+
+}

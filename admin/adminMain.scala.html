@@ -1,0 +1,20 @@
+@import admin.common.head._
+
+@(pageClasses: Array[String] = Array(), pageScripts: Array[String] = Array())(content: Html)
+
+<!DOCTYPE html>
+<html>
+	<head>
+  		@adminMeta()
+  		<title>Kanooba - Admin Dashboard</title>
+  		@adminAppleTouchIcon()
+  		@adminStylesheetIncludes()
+  		@adminJavascriptIncludesHeader()
+  		@adminRequireJsAppContext(pageScripts)
+  	</head>
+	<body class="@pageClasses.mkString(" ")">
+		@content
+		@adminJavascriptIncludesFooter()
+		@adminRequireJsInit(pageScripts)
+	</body>
+</html>

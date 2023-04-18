@@ -1,0 +1,20 @@
+@import admin.tag._
+
+@(name: String, label: String, args: (Symbol,Any)*)
+
+@defining(args.toMap) {argsMap =>
+
+<div class="form-group form-group-default @argsMap.get('formGroupClasses).getOrElse("").toString">
+	<label for="@name">@label</label>
+	<input id="@name" name="@name" type="text" class="form-control @argsMap.get('inputClasses).getOrElse("").toString" data-knb-input-type="datepicker">
+</div>
+
+@requirejs() {
+  	requirejs(['app/util/adminFormUtil'], function (adminFormUtil) {
+  		var startDate = @argsMap.get('startDate).getOrElse("null").toString;
+  		var endDate = @argsMap.get('endDate).getOrElse("null").toString;
+		adminFormUtil.initializeDatePicker('@name', startDate, endDate);
+	});
+}
+
+}

@@ -1,0 +1,72 @@
+@import admin.ui.form._
+@import admin.tag._
+
+<div class="modal modal-fullscreen fade" id="modal-user-profile" tabindex="-1" role="dialog" aria-hidden="false">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content-wrapper">
+      <div class="modal-content">
+        <div class="modal-header clearfix text-left">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>
+        </div>
+        <div class="modal-body text-center">
+        	<iframe src="" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-delete-account" tabindex="-1" role="dialog" aria-hidden="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content-wrapper">
+      <div class="modal-content">
+      	<div class="modal-header clearfix text-center">
+		  <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>
+          <h3 class="no-margin bold">@Messages("action.user.delete")</h3>
+        </div>
+        <div class="modal-body text-center m-t-10">
+        	<form id="form-delete-account" role="form"> 
+          		@adminTextArea("deletionReason", 'placeholder -> Messages("action.reason"))
+          		@adminGlobalFormErrorDisplay()
+          		<button type="submit" class="btn btn-primary btn-cons m-t-5">@Messages("delete")</button>
+          	</form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-change-account-status" tabindex="-1" role="dialog" aria-hidden="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content-wrapper">
+      <div class="modal-content">
+      	<div class="modal-header clearfix text-center">
+		  <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>
+          <h3 class="no-margin bold">@Messages("action.user.changestatus.short")</h3>
+        </div>
+        <div class="modal-body text-center m-t-10">
+        	<form id="form-change-account-status" role="form"> 
+        		@adminDefaultSelect(
+				        		"accountStatus", 
+				        		options = Seq(
+				        			("1", Messages("accountstatus.activationpending")), 
+				        			("2", Messages("accountstatus.active")), 
+				        			("3", Messages("accountstatus.disabled")), 
+				        			("4", Messages("accountstatus.abandoned"))), 
+				        			'selectLabel -> Messages("select"),
+				        			'formGroupClasses -> "text-left")
+          		@adminTextArea("changeReason", 'placeholder -> Messages("action.reason"))
+          		@adminGlobalFormErrorDisplay()
+          		<button type="submit" class="btn btn-primary btn-cons m-t-5">@Messages("save")</button>
+          	</form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@requirejs() {
+  	requirejs(['app/admin/common/adminBasicUserActionModals'], function (basicUserActionModals) {
+		//the initialization is done inside of the module
+	});
+}

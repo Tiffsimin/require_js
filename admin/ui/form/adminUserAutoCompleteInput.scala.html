@@ -1,0 +1,18 @@
+@import admin.tag._
+
+@(name: String, label: String, args: (Symbol,Any)*)
+
+@defining(args.toMap) {argsMap =>
+
+<div class="form-group form-group-default @argsMap.get('formGroupClasses).getOrElse("").toString">
+	<label for="@name">@label</label>
+	<input id="@name" name="@name" type="text" class="form-control @argsMap.get('inputClasses).getOrElse("").toString">
+</div>
+
+}
+
+@requirejs() {
+  	requirejs(['app/util/adminFormUtil'], function (adminFormUtil) {
+		adminFormUtil.initializeUserAutoComplete('@name');
+	});
+}

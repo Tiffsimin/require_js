@@ -1,0 +1,17 @@
+@import admin.ui.form._
+
+<div id="admin-address-selector">
+	@adminHiddenField("latitude")
+	@adminHiddenField("longitude")
+	@adminHiddenField("street")
+	@adminHiddenField("district")
+	@adminHiddenField("locality")
+	@adminHiddenField("province")
+	@adminTextInput(
+		"address-input", 
+		Messages("address"), 
+		'inputClasses -> "validation-ignore serialization-ignore",
+		'formGroupClasses -> "required")
+	<div id="address-map" ></div>
+	<div id="location-message-target" ></div>				    
+</div>
