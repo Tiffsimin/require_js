@@ -1,0 +1,19 @@
+@(center: Boolean = false)
+
+<div class="form-field field-action">
+	<div class="field-group">
+
+		<div class="button-group @if(center) {text-center} else {text-right}">
+
+			<button type="button" class="button button-danger action-cancel">
+				<span class="label">@Messages("cancel")</span>
+			</button>
+
+			<button type="button" class="button button-success action-save">
+				<span class="label">@Messages("save")</span>
+			</button>
+
+		</div>
+
+	</div>
+</div>

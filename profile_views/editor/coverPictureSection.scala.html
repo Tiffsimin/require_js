@@ -1,0 +1,40 @@
+@import models.user.ProfileEditorVM
+@import kui.form.button._
+
+@(form: Form[ProfileEditorVM])
+
+<!-- Profile: Hero -->
+<div class="profile profile-hero">
+
+	@*
+		Image sizes
+		800 x 300 — to medium
+		1200 x 400 - medium up
+		2000 x 400 - large up
+	*@
+
+	<div class="hero-background">
+		<span data-picture data-alt="">
+			<span data-src="@routes.Assets.versioned("data/profile-background-small-01.jpg")"></span>
+			<span data-src="@routes.Assets.versioned("data/profile-background-medium-01.jpg")" data-media="(min-width: 768px)"></span>
+			<span data-src="@routes.Assets.versioned("data/profile-background-large-01.jpg")"  data-media="(min-width: 1000px)"></span>
+			<!--[if (lt IE 9) & (!IEMobile)]>
+				<span data-src="@routes.Assets.versioned("data/profile-background-large-01.jpg")"></span>
+			<![endif]-->
+			<noscript>
+				<img src="@routes.Assets.versioned("data/profile-background-small-01.jpg")" alt="">
+			</noscript>
+		</span>
+	</div>
+
+	@*
+	<input id="upload-background" type="file"/>
+
+	@defaultButton(href = "#upload-background", label = Messages("profile.editor.coverpicture"), title = Messages("edit"),
+		classes = Array("button-edit", "action-upload-file")
+	)
+	
+	*@
+
+</div>
+<!-- /Profile: Hero -->

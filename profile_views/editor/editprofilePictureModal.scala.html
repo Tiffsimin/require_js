@@ -1,0 +1,45 @@
+@import kui.modal._
+@import kui.form.container._
+@import kui.form.button._
+
+@()
+
+@defaultModal(id = "modal-profile-editor-profile-picture-upload", title = "", hideHeader = true,
+	modalClasses = Array("modal-profile-picture-edit"), containerClasses = Array("style-invert")
+	) {
+	
+	@floatingLabelsFormContainer() {
+	
+		@blockContainer(id = "global-error-message-profile-picture-upload")(HtmlFormat.empty)
+					
+		@columnContainer(isFirstColumn = true) {
+			<div class="profile-picture-cropper-container">
+				<div class="initializing-indicator">@Messages("initializing")...</div>
+				<div class="profile-picture-cropper-wrapper">
+					<img />
+				</div>
+				<div class="profile-picture-cropper-buttons">
+					@defaultIconOnlyButton(href = "#", icon = "icon-sil icon-sil-zoom-in", alt = "Zoom in", classes = Array("action-zoom-in"))
+					@defaultIconOnlyButton(href = "#", icon = "icon-sil icon-sil-zoom-out", alt = "Zoom out", classes = Array("action-zoom-out"))
+				</div>
+			</div>		
+		}			
+		
+		@columnContainer() {
+			<div class="profile-picture-preview-container">
+				<h3 class="title">@Messages("preview")</h3>
+				
+				<span class="avatar avatar-rounded avatar-mask-color-island avatar-large">
+					<span class="mask-placeholder"></span>
+						<div class="profile-picture-preview">
+						</div>
+					</span>
+				</span>
+			</div>
+		}
+					
+		@cancelAndSaveButtons(center = true)	
+	
+	}	
+		
+}

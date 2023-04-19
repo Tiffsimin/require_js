@@ -1,0 +1,57 @@
+@import models.user.ProfileEditorVM
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.radio._
+@import kui.form.container._
+@import kui.util._
+
+@(form: Form[ProfileEditorVM], fieldName: String)
+
+@renderSeparator(separator: String) = {
+	<div class="form-field field-text field-experience-separator">
+		<div class="field-group">
+			<div class="separator-character">
+				@separator
+			</div>
+		</div>
+	</div>
+}
+
+<!-- Experience group -->
+<div class="form-group form-group-experience">
+
+	@yearMonthSelector(form(fieldName + ".startYear"), form(fieldName + ".startMonth"), Messages("daterangefrom"), fieldName + ".startYearMonth",
+		'_fieldClasses -> "ignore-floating-label small-margin field-experience-from",
+		'_yearClasses -> "size-year",
+		'_monthClasses -> "size-month")
+		
+	@renderSeparator("-")
+	
+		
+	@yearMonthSelector(form(fieldName + ".endYear"), form(fieldName + ".endMonth"), Messages("daterangeto"), fieldName + ".endYearMonth", 
+		'_fieldClasses -> "ignore-floating-label small-margin field-experience-to",
+		'_yearClasses -> "size-year",
+		'_monthClasses -> "size-month")
+
+	@textInput(form(fieldName + ".subjects"), '_label -> Messages("tutoringexperience.subjects"),
+				'_fieldClasses -> "field-experience-subject small-margin")
+
+	@renderSeparator("/")
+
+	@textInput(form(fieldName + ".studyLevel"), '_label -> Messages("tutoringexperience.studylevel"),
+				'_fieldClasses -> "field-experience-level no-margin")
+				
+	<div class="remove-group position-bottom-right">
+
+		<!-- Delete action -->
+		@dangerIconOnlyButton(href = "#", icon = "icon-trash", alt = Messages("delete"), 
+			classes = Array("action-remove"), title = Messages("delete"))
+		<!-- /Delete action -->
+
+	</div>
+
+</div>
+<!-- /Experience group -->
+
+<hr class="style-compact">

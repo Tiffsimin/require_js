@@ -1,0 +1,57 @@
+@import models.user.ProfileSearchVM 
+@import models.util.PaginationUtil
+@import models.util.PaginationUtil.PaginationRange
+@import com.kanooba.core.util.query.SearchResult
+@import com.kanooba.core.user.TutorSearchResultEntry
+
+@(model: ProfileSearchVM)
+
+@defining(PaginationUtil.getUrlTemplate(request)) { urlTemplate =>
+
+<!-- Pagination -->
+<nav role="navigation" class="pagination">
+
+	@*<p class="pagination-info">1 - 9 of 77 Tutors</p>*@
+
+	<ul class="nav-pagination">
+		@if(model.result.hasPreviousPage) {
+			<li class="item-prev">
+				<a href="@PaginationUtil.getUrlForPage(urlTemplate, model.result, model.result.getCurrentPageIndex - 1)">
+					<i class="icon icon-arrow-left" aria-hidden="true"></i>
+					<span class="label">@Messages("previous")</span>
+				</a>
+			</li>	
+		}
+		
+		
+		@if(model.result.getTotalPageCount > 1) {
+			
+			@defining(PaginationUtil.getPaginationRange(model.result)) { paginationRange =>
+				
+				@for(i <- paginationRange.firstPageIndex to paginationRange.lastPageIndex) {
+					@if(i == model.result.getCurrentPageIndex) {
+						<li @if(i == model.result.getCurrentPageIndex) {class="is-active"}><a href="#">@i</a></li>
+					} else {
+						<li><a href="@PaginationUtil.getUrlForPage(urlTemplate, model.result, i)">@i</a></li>
+					}
+				}
+				
+			}
+				
+		}
+		
+		@if(model.result.hasNextPage) {
+			<li class="item-next">
+				<a href="@PaginationUtil.getUrlForPage(urlTemplate, model.result, model.result.getCurrentPageIndex + 1)">
+					<span class="label">@Messages("next")</span>
+					<i class="icon icon-arrow-right" aria-hidden="true"></i>
+				</a>
+			</li>
+		}
+		
+	</ul>
+
+</nav>
+<!-- /Pagination -->
+
+}

@@ -1,0 +1,38 @@
+@import kui.form.container._
+
+
+@()
+
+@kui.modal.defaultModal(id = "modal-request-guidance", title = "profile.search.requestguidance",
+	modalClasses = Array("style-width-small"), containerClasses = Array("style-narrow"),
+	headerClasses = Array("style-color-success")
+	) {
+	<!-- Form container -->
+	<div class="form-container floating-labels">
+		<form id="form-request-guidance" role="form">
+	
+		<div class="form-field style-full-width style-auto-expand">
+			<div class="field-label">
+				<label for="message">@Messages("profile.search.requestguidance.message.placeholder")</label>
+			</div>
+			<div class="field-group">
+				<textarea id="message" name="message"></textarea>
+			</div>
+		</div>
+		
+		@globalFormErrorDisplay()
+		
+		<div class="form-field field-action style-full-width">
+			<div class="field-group">
+
+				<button type="button" id="button-send"  class="button button-secondary position-right">
+					<span class="label">@Messages("send")</span>
+				</button>
+
+			</div>
+		</div>
+
+		</form>
+	</div>
+	<!-- /Form container -->
+}

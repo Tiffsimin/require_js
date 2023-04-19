@@ -1,0 +1,89 @@
+@import models.user.ProfileEditorVM
+@import kui.form.container._
+@import kui.message._
+@import models.util.FlashKey
+
+@(form: Form[ProfileEditorVM])
+
+@modals = {
+	@editprofilePictureModal()
+	@manageTutoredSubjectsModal(form)
+	@manageTutoredStudyLevelsModal(form)
+}
+
+@layout.defaultLayout(documentTitle = "pagetitle.profile.editor",
+	pageClasses = Array("page-profile"), 
+	pageScripts = Array("app/profile/editor/editProfileController"),
+	modals = modals) {
+
+	@loadingContainer() {
+
+		<!-- Block: Main -->
+		<div class="block-main">
+			<div class="container">
+	
+				<!-- Main content -->
+				<section class="main-content" role="main">
+				
+					@coverPictureSection(form)
+				
+					<!-- Profile: Full -->
+					<div class="profile profile-full style-narrow">
+					
+						@blockContainer(id = "profile-editor-global-error-message")(HtmlFormat.empty)
+					
+						<!-- Profile: Intro -->
+						<div class="profile-intro is-editable">
+						
+							@profilePictureAndBaseInfoSection(form)
+							
+						</div>
+						<!-- /Profile: Intro -->
+						
+						<!-- Profile: Calendar -->
+						<div class="profile-calendar sidebar-sticky">
+	
+							@priceAndCalendarSection(form)
+	
+						</div>
+						<!-- /Profile: Calendar -->
+						
+						<!-- Profile: Details -->
+						<div class="profile-details">
+						
+							@if(!form.get.isForeignLanguageTutor) {
+							
+								@personalSection(form)
+								
+							}
+							
+							@aboutSection(form)
+							
+							@tutoredSubjectsAndStudyLevelsSection(form)
+							
+							@tutoringExperienceSection(form)
+							
+							@if(!form.get.isForeignLanguageTutor) {
+							
+								@distinctionsSection(form)
+																
+								@travelPreferenceSection(form)
+								
+							}
+						
+						</div>
+						<!-- /Profile: Details -->
+						
+					</div>
+					<!-- /Profile: Full -->
+				
+				</section>
+				<!-- /Main content -->
+	
+			</div>
+		</div>
+		<!-- /Block: Main -->
+	
+	}
+	
+}

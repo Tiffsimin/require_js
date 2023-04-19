@@ -1,0 +1,92 @@
+@import models.user.ProfileEditorVM
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.container._
+@import kui.time._
+@import java.time.LocalDate
+@import java.math.RoundingMode
+
+@(form: Form[ProfileEditorVM])
+
+@createDateToHtmlEntriesMap(dateToEntriesMap: Map[LocalDate, List[Boolean]]) = @{
+	dateToEntriesMap.map{ case (date, entries) => (date, entries.map(entry => calendarEntry(date)))
+    }
+}
+
+<!-- Calendar: Compact -->
+<div id="profile-editor-hourlyrate"  class="calendar-compact is-editable">
+
+	<!-- Calendar: Title -->
+	<div class="calendar-title">
+	
+		<div class="title-content">
+			<h2>
+				@if(form.get.hourlyRate != null) {
+					<span id="profile-editor-hourlyrate-label">@form.get.hourlyRate.setScale(0, RoundingMode.HALF_UP)</span>@Messages("rmbperhour")
+				}
+			</h2>
+		</div>
+		
+		<div class="title-edit">
+		
+			@if(!form.get.isForeignLanguageTutor) {
+
+				@textInput(form("hourlyRate"), '_label -> Messages("hourlyrate"), 
+					'_fieldClasses -> "hide-label field-calendar-price",
+					'_inputGroupClasses -> "style-inline",
+					'_inlineText -> Messages("rmbperhour"))
+			
+				@blockContainer(id = "global-error-message-hourlyrate")(HtmlFormat.empty)
+	
+				@cancelAndSaveButtons(center = true)
+			}
+
+		</div>
+
+		@if(!form.get.isForeignLanguageTutor) {
+			@editButton()
+		}
+		
+	</div>
+	<!-- /Calendar: Title -->
+
+	<!-- Calendar: Content -->
+	<div class="calendar-content">
+
+		<h3 class="content-title">@Messages("booktutornow")</h3>
+
+		<div class="table-group">
+
+			<!-- Table: Calendar header -->
+			<div class="table-calendar-header">
+
+				<h3>@Messages("month_" + form.get.yearMonthDescriptor.yearMonth.getMonthValue)</h3>
+
+			</div>
+			<!-- /Table: Calendar header -->
+
+			@calendarTable(yearMonthDescriptor = form.get.yearMonthDescriptor, dateToHtmlEntriesMap = createDateToHtmlEntriesMap(form.get.availableDateEntries),
+				startMonthFromToday = true)
+
+		</div>
+
+	</div>
+	<!-- /Calendar: Content -->
+
+	<!-- Calendar: Action -->
+	<div class="calendar-action">
+
+		<a href="#" class="action-link">@Messages("showfullcalendar")</a>
+
+	</div>
+	<!-- /Calendar: Action -->
+
+	<!-- Calendar: Edit -->
+	<div class="calendar-edit">
+		@secondaryButton(href = routes.SchedulingController.showAvailabilityManagementCalendar().url, 
+			label = Messages("manageavailability"), classes = Array("action-set-availability"))
+	</div>
+	<!-- /Calendar: Edit -->
+
+</div>
+<!-- /Calendar: Compact -->

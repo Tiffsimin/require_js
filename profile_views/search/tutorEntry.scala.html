@@ -1,0 +1,60 @@
+@import java.math.RoundingMode
+@import com.kanooba.core.user.TutorSearchResultEntry
+
+@(entry: TutorSearchResultEntry, profileUrl: String)
+
+<!-- Tutor listing -->
+<div id="tutor-listing-@entry.getId" class="tutor-listing">
+
+	<div class="tutor-avatar">
+		<span class="avatar avatar-rounded avatar-mask-white avatar-large">
+			<a href="@profileUrl">
+				<span class="mask-placeholder"></span>
+				<img src="@tag.url.avatarLargeUrl(entry.getProfilePicture)" class="avatar-image" alt="@entry.getDisplayName">
+				@*<span class="avatar-badge badge-small image-icon-badge"></span>*@
+			</a>
+		</span>
+	</div>
+
+	@*
+	<div class="tutor-rating">
+		<div class="star-rating rating-0 style-medium">
+			<i class="icon icon-star" aria-hidden="true"></i>
+			<i class="icon icon-star" aria-hidden="true"></i>
+			<i class="icon icon-star" aria-hidden="true"></i>
+			<i class="icon icon-star" aria-hidden="true"></i>
+			<i class="icon icon-star" aria-hidden="true"></i>
+			<span class="rating-number">(0)</span>
+		</div>
+	</div>
+	*@
+
+	<h3 class="tutor-title">
+		<span class="badge-small image-icon-shield"></span>
+		@entry.getDisplayName
+	</h3>
+
+	<div class="tutor-description">
+		@if(entry.getMajor != null) {
+			<p>@entry.getMajor</p>	
+		}
+		@if(entry.getUniversity != null){
+			<p>@entry.getUniversity.getName.get</p>
+		}
+		@if(entry.getLocality != null || entry.getDistrict != null) {
+			<p>@if(entry.getLocality != null){@entry.getLocality.getName.get@if(entry.getDistrict != null){, }}@if(entry.getDistrict != null){@entry.getDistrict.getName.get}</p>		
+		}
+	</div>
+
+	<div class="tutor-price">
+		<span>@entry.getHourlyRate.setScale(0, RoundingMode.HALF_UP) <em>元/h</em></span>
+	</div>
+
+	<div class="tutor-action">
+		<a href="@profileUrl" class="button">
+			<span class="label">@Messages("profile.view")</span>
+		</a>
+	</div>
+
+</div>
+<!-- /Tutor listing -->

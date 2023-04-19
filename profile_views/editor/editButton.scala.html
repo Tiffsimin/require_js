@@ -1,0 +1,7 @@
+@import kui.form.button._
+
+@(href: String = "#", classes: Array[String] = Array())
+
+@defining(classes:+ "button-edit") { buttonClasses =>
+	@defaultIconOnlyButton(href = href, icon = "icon-pencil", alt = Messages("edit"), title = Messages("edit"), classes = buttonClasses)
+}

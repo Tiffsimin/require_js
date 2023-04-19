@@ -1,0 +1,28 @@
+@import models.user.ProfileSearchVM
+@import kui.form.dropdown._
+@import com.kanooba.core.user.TutorSearchQuery
+
+@(model: ProfileSearchVM)
+
+@defaultDropDown(id = "filter-priceRange", label = Messages("pricerange")) {
+
+	<div class="scroll-container">
+	@defining(Seq((0, 20), (21, 50), (51, 100), (101, 150), (151, null))) { ranges =>
+			
+		@for(range <- ranges) {
+			<div class="radio-container style-list">
+				<label class="radio-label">
+					@if(range._2 != null) {
+						@range._1 - @range._2 元/h					
+					} else {
+						> @range._1 元/h
+					}
+					<input data-knb-min-price="@range._1" data-knb-max-price="@range._2" type="radio" id="price-range-@range._1" name="priceRange" value="@range._1" @if(model.query.minHourlyRate != null && model.query.minHourlyRate.compareTo(java.math.BigDecimal.valueOf(range._1)) == 0){checked="checked"}>
+				</label>
+			</div>
+		}
+		
+	}
+	</div>
+
+}

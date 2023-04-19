@@ -1,0 +1,70 @@
+@import models.user.ProfileEditorVM
+@import models.util.DateUtil
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.radio._
+@import kui.form.container._
+@import kui.util._
+@import kui.time._
+@import helper.repeat
+@import java.time.YearMonth
+
+@(form: Form[ProfileEditorVM])
+
+<div id="profile-editor-distinctions" class="group-listing is-editable">
+	<div class="group-title">
+		<h2>@Messages("distinctions")</h2>
+	</div>
+	<div class="group-content">
+		@if(form.get.distinctionsDM != null) {
+		
+			@for(distinction <- form.get.distinctionsDM) {
+				<p>@toYearMonthShort(distinction.getYearMonth)<br>
+				@newlineToBreak(distinction.getDescription)</p>		
+			}
+		
+		}
+	</div>
+
+	<!-- Edit content -->
+	<div class="group-editable">
+	
+		@floatingLabelsFormContainer() {
+		
+			<div class="hide form-group-template">
+				@distinctionGroup(form, "distinctionsTemplate[0]")
+			</div>
+
+			<div class="form-group-container">
+			
+				@repeat(form("distinctions"), 0) { distinctionField =>
+					@distinctionGroup(form, distinctionField.name.toString)
+				}
+				
+			</div>
+			
+			<div class="form-field field-action">
+				<div class="field-group">
+
+					<div class="button-group text-left">
+
+						@defaultFormButton(label = Messages("distinction.add"), classes = Array("action-add", "button"))
+
+					</div>
+
+				</div>
+			</div>
+
+			@blockContainer(id = "global-error-message-distinctions")(HtmlFormat.empty)
+
+			@cancelAndSaveButtons()
+
+		}
+
+	</div>
+	<!-- /Edit content -->
+
+	@editButton()
+
+</div>

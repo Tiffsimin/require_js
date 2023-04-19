@@ -1,0 +1,90 @@
+@import models.user.ProfileEditorVM
+@import com.kanooba.core.education.StudyType
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.container._
+
+@(form: Form[ProfileEditorVM])
+
+<div class="profile-avatar">
+
+	<span class="avatar avatar-rounded avatar-mask-white avatar-large is-editable">
+		<span class="mask-placeholder"></span>
+		<img src="@tag.url.avatarLargeUrl(form.get.profilePicture)" class="avatar-image" alt="@form.get.displayName">
+
+		@helper.form(action = routes.ProfileController.uploadRawProfilePicture(), 'enctype -> "multipart/form-data") {
+	        <input id="upload-profile-picture" name="profilePicture" type="file" />
+	    }
+	    
+	   <label for="upload-profile-picture" class="button button-icon-only button-edit">
+			<span class="label">@Messages("edit")</span>
+			<i class="icon icon-pencil" aria-hidden="true"></i>
+		</label>
+		
+		@* editButton(href = "#upload-profile-picture", classes = Array("action-upload-file")) *@
+
+	</span>
+</div>
+
+<div id="profile-editor-base-info" class="profile-info">
+
+	<h1 id="profile-editor-displayname" class="profile-name">@form.get.displayName</h1>
+
+	<div class="profile-meta">
+		@if(form.get.major != null) {
+			<p id="profile-editor-major">@form.get.major</p>
+		}
+		@if(!form.get.isForeignLanguageTutor) {
+			<p><span id="profile-editor-studylevel">@form.get.studyLevelName</span>, <span id="profile-editor-studytype">@Messages(form.get.studyType.getLocalizationKey)</span></p>
+			<p id="profile-editor-university">@form.get.universityName</p>
+		}
+	</div>
+
+	<!-- Profile editable -->
+	<div class="profile-info-editable">
+
+		@floatingLabelsFormContainer() {
+		
+			@textInput(form("displayName"), '_label -> Messages("displayname"), '_icon -> "icon-user-circle",
+				'_fieldClasses -> "small-margin")
+				
+			@if(!form.get.isForeignLanguageTutor) {
+			
+				@textInput(form("major"), '_label -> Messages("major.withexample"), '_icon -> "icon-books", '_fieldClasses -> "small-margin")
+				
+				@defaultSelect(form("studyLevelId"), 
+					options = form.get.tutorStudyLevels.map(s => s.getId.toString -> s.getName.get).toSeq,
+					'_label -> Messages("studylevel"),
+					'_fieldClasses -> "small-margin",
+					'style -> "width: 100%"
+				)
+				
+				@defaultSelect(form("studyType"), 
+					options = StudyType.values().map(s => s.getId.toString -> Messages(s.getLocalizationKey)).toSeq,
+					'_label -> Messages("studytype"),
+					'_fieldClasses -> "small-margin",
+					'style -> "width: 100%"
+				)
+				
+				@defaultSelect(form("universityId"), 
+					options = form.get.universities.map(u => u.getId.toString -> u.getName.get).toSeq,
+					'_label -> Messages("university"),
+					'_searchable -> true,
+					'style -> "width: 100%"
+				)
+			
+			}
+			
+			@blockContainer(id = "global-error-message-base-info")(HtmlFormat.empty)
+
+			@cancelAndSaveButtons()
+
+		}
+
+	</div>
+	<!-- /Profile editable -->
+
+	@editButton()
+
+</div>

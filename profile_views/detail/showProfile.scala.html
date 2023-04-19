@@ -1,0 +1,365 @@
+@import models.user.ProfileDetailVM
+@import com.kanooba.core.user.TutorType
+@import com.kanooba.core.user.Gender
+@import kui.location._
+@import kui.time._
+@import kui.util._
+@import kui.form.button._
+@import java.time._
+@import java.math.RoundingMode
+@import tag._
+@import models.ui.Origin
+@import models.util.LinkSpec
+@import models.util.UrlUtil
+@import models.util.TemplatePlaceholder
+@import common.button._
+
+@(model: ProfileDetailVM, backAction: LinkSpec)
+
+@createDateToHtmlEntriesMap(dateToEntriesMap: Map[LocalDate, List[Boolean]]) = @{
+	dateToEntriesMap.map{ case (date, entries) => (date, entries.map(entry => calendarEntry(date)))
+    }
+}
+
+@modals = {
+	@requestTutorModal()
+}
+
+@layout.defaultLayout(documentTitle = Messages("pagetitle.profile.detail", model.displayName),
+	pageClasses = Array("page-profile"), 
+	pageScripts = Array("app/profile/detail/showProfileController"),
+	modals = modals) {
+	
+	@containerTopBackAction(href = backAction.href, label = backAction.label)
+	
+	<!-- Block: Main -->
+	<div class="block-main">
+		<div class="container">
+
+			<!-- Main content -->
+			<section id="tutor-profile-main" class="main-content" role="main" data-knb-tutor-id="@model.id">
+			
+				<!-- Profile: Hero -->
+				<div class="profile profile-hero">
+				
+					@*
+						Image sizes
+						800 x 300 — to medium
+						1200 x 400 - medium up
+						2000 x 400 - large up
+					*@
+				
+					<div class="hero-background">
+						<span data-picture data-alt="">
+							<span data-src="@routes.Assets.versioned("data/profile-background-small-01.jpg")"></span>
+							<span data-src="@routes.Assets.versioned("data/profile-background-medium-01.jpg")" data-media="(min-width: 768px)"></span>
+							<span data-src="@routes.Assets.versioned("data/profile-background-large-01.jpg")"  data-media="(min-width: 1000px)"></span>
+							<!--[if (lt IE 9) & (!IEMobile)]>
+								<span data-src="@routes.Assets.versioned("data/profile-background-large-01.jpg")"></span>
+							<![endif]-->
+							<noscript>
+								<img src="@routes.Assets.versioned("data/profile-background-small-01.jpg")" alt="">
+							</noscript>
+						</span>
+					</div>
+				
+				</div>
+				<!-- /Profile: Hero -->
+				
+				<!-- Profile: Full -->
+				<div class="profile profile-full style-narrow">
+				
+					<!-- Profile: Intro -->
+					<div class="profile-intro">
+					
+						<div class="profile-avatar">
+
+							<span class="avatar avatar-rounded avatar-mask-white avatar-large">
+								<span class="mask-placeholder"></span>
+								<img src="@tag.url.avatarLargeUrl(model.profilePicture)" class="avatar-image" alt="@model.displayName">
+							</span>
+						
+						</div>
+						
+						<div class="profile-info">
+						
+							@*
+							<div class="star-rating rating-0 style-large">
+								<i class="icon icon-star" aria-hidden="true"></i>
+								<i class="icon icon-star" aria-hidden="true"></i>
+								<i class="icon icon-star" aria-hidden="true"></i>
+								<i class="icon icon-star" aria-hidden="true"></i>
+								<i class="icon icon-star" aria-hidden="true"></i>
+								<span class="rating-number">(0)</span>
+							</div>
+							*@
+						
+							<h1 class="profile-name">@model.displayName</h1>
+						
+							<div class="profile-meta">
+								@if(model.major != null) {
+									<p>@model.major</p>
+								}
+								@if(model.studyLevelName != null && model.studyType != null) {
+									<p>@model.studyLevelName, @Messages(model.studyType.getLocalizationKey)</p>
+								}
+								@if(model.universityName != null) {
+									<p>@model.universityName</p>
+								}
+							</div>
+							
+							<div class="profile-action">
+
+								@sendMessageButton(model.id, model.tutorType)
+
+							</div>
+						
+						</div>
+						
+					</div>
+					<!-- /Profile: Intro -->
+					
+					@defining(routes.SchedulingController.showSessionBookingCalendar(model.id, TemplatePlaceholder.TUTOR_PROFILE_CALENDAR_DATE).url) { calendarUrl =>
+						@defining(UrlUtil.appendDefaultSearchQueryStringParameters(request, calendarUrl)) { calendarUrlWithSearchParams =>
+							@defining(UrlUtil.pushOrigin(request, calendarUrlWithSearchParams, Origin.TUTOR_PROFILE)) { calendarUrlWithSearchParamsAndOrigin =>
+					
+					<!-- Profile: Calendar -->
+					<div id="tutor-profile-calendar" class="profile-calendar sidebar-sticky" data-knb-calendar-url-template="@calendarUrlWithSearchParamsAndOrigin">
+
+						@defining(calendarUrlWithSearchParamsAndOrigin.replace(TemplatePlaceholder.TUTOR_PROFILE_CALENDAR_DATE, "")) { href =>
+						
+							<!-- Calendar: Compact -->
+							<div class="calendar-compact">
+							
+								<!-- Calendar: Title -->
+								<div class="calendar-title">
+								
+									<h2>
+										@if(model.hourlyRate != null) {
+											<span class="highlight">@model.hourlyRate.setScale(0, RoundingMode.HALF_UP)元 </span>@Messages("perhour")
+										}
+									</h2>
+									
+								</div>
+								<!-- /Calendar: Title -->
+							
+								@if(model.tutorType.equals(TutorType.CHINESE_ACADEMIC)) {
+								
+									<!-- Calendar: Content -->
+									<div class="calendar-content">
+								
+										<h3 class="content-title">@Messages("booktutornow")</h3>
+								
+										<div class="table-group">
+								
+											<!-- Table: Calendar header -->
+											<div class="table-calendar-header">
+								
+												<h3>@Messages("month_" + model.yearMonthDescriptor.yearMonth.getMonthValue)</h3>
+								
+											</div>
+											<!-- /Table: Calendar header -->
+								
+											@calendarTable(yearMonthDescriptor = model.yearMonthDescriptor, dateToHtmlEntriesMap = createDateToHtmlEntriesMap(model.availableDateEntries),
+												dayCellHref = href, dayCellTitle = Messages("showavailabletimes"), startMonthFromToday = true)
+								
+										</div>
+								
+									</div>
+									<!-- /Calendar: Content -->
+									
+								}
+								
+								<!-- Calendar: Action -->
+								<div class="calendar-action">
+									
+									@if(model.tutorType.equals(TutorType.CHINESE_ACADEMIC)) {
+										<a href="@href" class="action-link">@Messages("showfullcalendar")</a>
+										@secondaryButton(href = href, label = "booktutor")
+									} else {
+										@secondaryButton(href = "#", label = "requesttutornow", classes = Array("action-request-tutor"))
+									}
+									
+								</div>
+								<!-- /Calendar: Action -->
+							
+							</div>
+							<!-- /Calendar: Compact -->
+							
+						}
+
+					</div>
+					<!-- /Profile: Calendar -->
+					
+							}
+						}
+					}
+					
+					<!-- Profile: Details -->
+					<div class="profile-details">
+					
+						<div class="group-listing">
+							<div class="group-title">
+								<h2>@Messages("personal")</h2>
+							</div>
+							<div class="group-content">
+								<i class="icon icon-@if(model.gender == Gender.FEMALE){female}else{male}" aria-hidden="true"></i> @Messages(model.gender.getLocalizationKey)@if(model.age > 0){, @Messages("agewithyears", model.age)}<br />
+								@model.nationalityName
+							</div>
+						</div>
+						
+						<div class="group-listing">
+							<div class="group-title">
+								<h2>@Messages("profileabout")</h2>
+							</div>
+							<div class="group-content">
+								<p>@newlineToBreak(model.biography)</p>
+							</div>
+						</div>
+						
+						<div class="group-listing">
+							<div class="group-title">
+								<h2>@Messages("tutoredsubjects")</h2>
+							</div>
+							<div class="group-content">
+								<ul class="list-tags">
+									@for(tutoredSubject <- model.tutoredSubjects) {
+										<li class="style-color-1">@tutoredSubject.getName.get</li>
+									}			
+								</ul>
+							</div>
+						</div>
+						
+						<div class="group-listing">
+							<div class="group-title">
+								<h2>@Messages("tutoredstudylevels")</h2>
+							</div>
+							<div class="group-content">
+								<ul class="list-tags">
+									@for(tutoredStudyLevel <- model.tutoredStudyLevels) {
+										<li class="style-color-1">@tutoredStudyLevel.getName.get</li>
+									}			
+								</ul>
+							</div>
+						</div>
+						
+						@if(model.tutoringExperienceDM != null) {
+							<div class="group-listing">
+								<div class="group-title">
+									<h2>@Messages("tutoringexperience")</h2>
+								</div>
+								<div class="group-content">
+									
+									@for(tutoringExperience <- model.tutoringExperienceDM) {
+										<p>@toYearMonthShort(tutoringExperience.getStartYearMonth) - @toYearMonthShort(tutoringExperience.getEndYearMonth)<br>
+										<strong>@tutoringExperience.getSubjects</strong><br>
+										@tutoringExperience.getStudyLevel</p>		
+									}
+									
+								</div>
+							</div>
+						}
+						
+						@if(model.distinctionsDM != null) {
+							<div class="group-listing">
+								<div class="group-title">
+									<h2>@Messages("distinctions")</h2>
+								</div>
+								<div class="group-content">
+									@for(distinction <- model.distinctionsDM) {
+										<p>@toYearMonthShort(distinction.getYearMonth)<br>
+										@newlineToBreak(distinction.getDescription)</p>		
+									}
+								</div>
+							</div>
+						}
+						
+						@if(model.travelPreference != null) {
+							<div class="group-listing">
+								<div class="group-title">
+									<h2>@Messages("travelpreference")</h2>
+								</div>
+								<div class="group-content">
+									<p id="profile-editor-travelpreference-label">
+										@Messages(model.travelPreference.getLocalizationKey)
+									</p>
+								</div>
+							</div>
+						}
+						
+						@if(model.locality != null || model.district != null) {
+							<div class="group-listing">
+								<div class="group-title">
+									<h2>@Messages("location")</h2>
+								</div>
+								<div class="group-content">
+									<p>
+										@if(model.locality != null) {@model.locality.getName.get@if(model.district != null){, }}@if(model.district != null) {@model.district.getName.get}
+									</p>
+								</div>
+							</div>						
+						}
+					
+					</div>
+					<!-- /Profile: Details -->
+					
+				</div>
+				<!-- /Profile: Full -->
+				
+				@if(model.fuzzyLatitudeLongitude != null) {
+					<!-- Profile: Location -->
+					<div class="profile-location">
+	
+						<div id="tutor-profile-map" data-knb-longitude="@model.fuzzyLatitudeLongitude.getLongitude.toString" data-knb-latitude="@model.fuzzyLatitudeLongitude.getLatitude.toString"></div>
+	
+					</div>
+					<!-- /Profile: Location -->				
+				}
+			
+			</section>
+			<!-- /Main content -->
+			
+			@*
+			<!-- Secondary content -->
+			<aside class="secondary-content" role="complementary">
+
+				<!-- Profile: Full -->
+				<div class="profile profile-full style-narrow">
+
+					<!-- Profile: Details -->
+					<div class="profile-details">
+
+						<div class="group-listing style-first">
+							<h2 class="group-review-title">
+								<span class="number">0</span> Reviews
+								<div class="star-rating rating-0 style-large">
+									<i class="icon icon-star" aria-hidden="true"></i>
+									<i class="icon icon-star" aria-hidden="true"></i>
+									<i class="icon icon-star" aria-hidden="true"></i>
+									<i class="icon icon-star" aria-hidden="true"></i>
+									<i class="icon icon-star" aria-hidden="true"></i>
+								</div>
+							</h2>
+							<div class="unrated">
+								@Messages("tutorunrated")
+							</div>
+						</div>
+						<!-- Details -->
+
+					</div>
+					<!-- /Profile: Details -->
+
+				</div>
+				<!-- /Profile: Full -->
+
+			</aside>
+			<!-- /Secondary content -->
+			*@
+
+		</div>
+	</div>
+	<!-- /Block: Main -->
+	
+	@containerBottomBackAction(href = backAction.href, label = backAction.label)
+	
+}

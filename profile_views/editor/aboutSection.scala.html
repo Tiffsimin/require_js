@@ -1,0 +1,38 @@
+@import models.user.ProfileEditorVM
+@import com.kanooba.core.user.Gender
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.radio._
+@import kui.form.container._
+@import kui.util._
+
+@(form: Form[ProfileEditorVM])
+
+<div id="profile-editor-about" class="group-listing is-editable">
+	<div class="group-title">
+		<h2>@Messages("profileabout")</h2>
+	</div>
+	<div class="group-content">
+		<p id="profile-editor-biography">@newlineToBreak(form.get.biography)</p>
+	</div>
+
+	<!-- Edit content -->
+	<div class="group-editable">
+
+		@floatingLabelsFormContainer() {
+
+			@textArea(form("biography"), '_label -> Messages("profileabout.label"), '_fieldClasses -> "style-auto-expand")
+
+			@blockContainer(id = "global-error-message-about")(HtmlFormat.empty)
+
+			@cancelAndSaveButtons()
+
+		}
+
+	</div>
+	<!-- /Edit content -->
+
+	@editButton()
+
+</div>

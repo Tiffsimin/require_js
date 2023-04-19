@@ -1,0 +1,45 @@
+@import models.user.ProfileEditorVM
+@import com.kanooba.core.user.TravelPreference
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.radio._
+@import kui.form.container._
+
+@(form: Form[ProfileEditorVM])
+
+<div id="profile-editor-travelpreference" class="group-listing is-editable">
+	<div class="group-title">
+		<h2>@Messages("travelpreference")</h2>
+	</div>
+	<div class="group-content">
+		<p id="profile-editor-travelpreference-label">
+		@if(form.get.travelPreference != null) {
+			@Messages(form.get.travelPreference.getLocalizationKey)
+		}
+		</p>
+	</div>
+
+	<!-- Edit content -->
+	<div class="group-editable">
+
+		@floatingLabelsFormContainer() {
+			
+			@defaultSelect(form("travelPreference"), 
+				options = TravelPreference.values().map(t => t.getId.toString -> Messages(t.getLocalizationKey)).toSeq,
+				'_label -> Messages("asktravelpreference"),
+				'style -> "width: 100%"
+			)
+
+			@blockContainer(id = "global-error-message-travelpreference")(HtmlFormat.empty)
+
+			@cancelAndSaveButtons()
+
+		}
+
+	</div>
+	<!-- /Edit content -->
+
+	@editButton()
+
+</div>

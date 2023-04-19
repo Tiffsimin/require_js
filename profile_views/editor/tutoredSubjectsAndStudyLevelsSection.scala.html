@@ -1,0 +1,46 @@
+@import models.user.ProfileEditorVM
+@import com.kanooba.core.user.Gender
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.radio._
+@import kui.form.container._
+@import kui.util._
+
+@(form: Form[ProfileEditorVM])
+
+<div id="profile-editor-tutored-subjects" class="group-listing is-editable">
+	<div class="group-title">
+		<h2>@Messages("tutoredsubjects")</h2>
+	</div>
+	<div class="group-content">
+		<ul class="list-tags">
+			@for(tutoredSubject <- form.get.tutoredSubjects) {
+				<li class="style-color-1">@tutoredSubject.getName.get</li>
+			}			
+		</ul>
+	</div>
+
+	@if(!form.get.isForeignLanguageTutor) {
+		@editButton()
+	}
+
+</div>
+
+<div id="profile-editor-tutored-studylevels" class="group-listing is-editable">
+	<div class="group-title">
+		<h2>@Messages("tutoredstudylevels")</h2>
+	</div>
+	<div class="group-content">
+		<ul class="list-tags">
+			@for(tutoredStudyLevel <- form.get.tutoredStudyLevels) {
+				<li class="style-color-1">@tutoredStudyLevel.getName.get</li>
+			}			
+		</ul>
+	</div>
+
+	@if(!form.get.isForeignLanguageTutor) {
+		@editButton()
+	}
+
+</div>

@@ -1,0 +1,72 @@
+@import models.user.ProfileSearchVM
+@import com.kanooba.core.education.Subject
+@import com.kanooba.core.education.SubjectRepository
+@import com.kanooba.core.education.UniversityRepository
+@import com.kanooba.core.education.StudyLevelRepository
+@import com.kanooba.core.user.TutorSearchQuery
+@import com.kanooba.core.util.query.SearchResult
+@import com.kanooba.core.user.TutorSearchResultEntry
+@import models.ui.Origin
+@import models.util.UrlUtil
+@import models.util.TemplatePlaceholder
+@import kui.form.container._
+@import kui.misc._
+
+@(model: ProfileSearchVM)
+
+@modals = {
+	@requestGuidanceModal()
+}
+
+@layout.defaultLayout(documentTitle = "pagetitle.profile.search",
+	pageClasses = Array("page-search"), 
+	pageScripts = Array("app/profile/search/searchTutorsController"),
+	modals = modals) {
+	
+	<!-- Block: Main -->
+	<div class="block-main style-invert">
+		<div class="container">
+
+			<!-- Main content -->
+			<section class="main-content" role="main">
+				
+				@loadingContainer() {				
+					
+					@filterControls(model)
+					
+					@activeFiltersDisplay(model)
+					
+					@resultCountAndSortControls(model)
+					
+					<div class="column-container container-tutor-listing">
+					
+						@defining(routes.ProfileController.showTutorProfile(TemplatePlaceholder.TUTOR_SEARCH_TUTOR_ID).url) { profileUrl =>
+							@defining(UrlUtil.appendDefaultSearchQueryStringParameters(request, profileUrl)) { profileUrlWithSearchParams =>
+								@defining(UrlUtil.pushOrigin(request, profileUrlWithSearchParams, Origin.TUTOR_SEARCH)) { profileUrlWithSearchParamsAndOrigin =>
+									@for(entry <- model.result.getEntries) {
+										<div class="column">
+											@tutorEntry(entry, profileUrlWithSearchParamsAndOrigin.replace(TemplatePlaceholder.TUTOR_SEARCH_TUTOR_ID.toString, entry.getId.toString))
+										</div>
+									}
+								}
+							}
+						}
+						
+					</div>
+					
+					@pagination(model)
+					
+				}
+
+			</section>
+			<!-- /Main content -->
+
+		</div>
+	</div>
+	<!-- /Block: Main -->
+	
+	@stickyBottomOverlay() {
+		<a href="#" class="action-request-guidance">Need help finding the right tutor?</a>
+	}
+	
+}

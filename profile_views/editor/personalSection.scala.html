@@ -1,0 +1,49 @@
+@import models.user.ProfileEditorVM
+@import com.kanooba.core.user.Gender
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.radio._
+@import kui.form.container._
+
+@(form: Form[ProfileEditorVM])
+
+<div id="profile-editor-personal" class="group-listing is-editable">
+	<div class="group-title">
+		<h2>@Messages("personal")</h2>
+	</div>
+	<div class="group-content">
+		<i id="profile-editor-gender-icon" class="icon icon-@if(form.get.gender == Gender.FEMALE){female}else{male}" aria-hidden="true"></i> <span id="profile-editor-gender-label">@Messages(form.get.gender.getLocalizationKey)</span>, <span id="profile-editor-age">@Messages("agewithyears", form.get.age)</span><br />
+		<span id="profile-editor-nationality">@form.get.nationalityName</span>
+	</div>
+
+	<!-- Edit content -->
+	<div class="group-editable">
+
+		@floatingLabelsFormContainer() {
+			
+			@radioButtonGroup(form("gender"), options = Gender.values().map(g => g.getId.toString -> Messages(g.getLocalizationKey)).toSeq,
+				'_fieldClasses -> Array("hide-label"), '_label -> Messages("gender"))
+			
+			@birthdaySelector(form("birthdayYear"), form("birthdayMonth"), form("birthdayDay"), serializationProperty = "birthDate",
+				'_fieldClasses -> "ignore-floating-label")
+			
+			@defaultSelect(form("nationalityId"), 
+				options = form.get.nationalities.map(n => n.getId.toString -> n.getName.get).toSeq,
+				'_label -> Messages("nationality"),
+				'_searchable -> true,
+				'style -> "width: 100%"
+			)
+
+			@blockContainer(id = "global-error-message-personal")(HtmlFormat.empty)
+
+			@cancelAndSaveButtons()
+
+		}
+
+	</div>
+	<!-- /Edit content -->
+
+	@editButton()
+
+</div>

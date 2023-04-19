@@ -1,0 +1,12 @@
+@import layout._
+@import kui.form.button._
+
+@(message: String)
+
+@islandLayout(headerTitle="error", documentTitle = "pagetitle.profile.detail.error", useDangerColoredHeader = true) {
+    
+	<p>@message</p>
+	
+	@primaryButton(href = routes.ProfileController.showTutorSearch().url, label = "browsetutors")
+   	    
+}

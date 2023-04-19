@@ -1,0 +1,33 @@
+@import models.user.ProfileEditorVM
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.radio._
+@import kui.form.container._
+@import kui.util._
+
+@(form: Form[ProfileEditorVM], fieldName: String)
+
+<!-- Distinction group -->
+<div class="form-group form-group-distinctions">
+
+	@yearMonthSelector(form(fieldName + ".year"), form(fieldName + ".month"), Messages("yearmonth.select"), fieldName + ".yearMonth",
+		'_fieldClasses -> "hide-label small-margin",
+		'_yearClasses -> "style-inline mobile-style-block",
+		'_monthClasses -> "style-inline mobile-style-block")
+
+	@textArea(form(fieldName + ".description"), '_label -> Messages("distinction.description"), '_fieldClasses -> "style-auto-expand no-margin")
+		
+	<div class="remove-group position-bottom-right">
+
+		<!-- Delete action -->
+		@dangerIconOnlyButton(href = "#", icon = "icon-trash", alt = Messages("delete"), 
+			classes = Array("action-remove"), title = Messages("delete"))
+		<!-- /Delete action -->
+
+	</div>
+
+</div>
+<!-- /Distinction group -->
+
+<hr class="style-compact">

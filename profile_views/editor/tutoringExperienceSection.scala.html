@@ -1,0 +1,71 @@
+@import models.user.ProfileEditorVM
+@import models.util.DateUtil
+@import kui.form.button._
+@import kui.form.text._
+@import kui.form.select._
+@import kui.form.radio._
+@import kui.form.container._
+@import kui.util._
+@import kui.time._
+@import helper.repeat
+@import java.time.YearMonth
+
+@(form: Form[ProfileEditorVM])
+
+<div id="profile-editor-tutoringexperience" class="group-listing is-editable">
+	<div class="group-title">
+		<h2>@Messages("tutoringexperience")</h2>
+	</div>
+	<div class="group-content">
+		@if(form.get.tutoringExperienceDM != null) {
+		
+			@for(tutoringExperience <- form.get.tutoringExperienceDM) {
+				<p>@toYearMonthShort(tutoringExperience.getStartYearMonth) - @toYearMonthShort(tutoringExperience.getEndYearMonth)<br>
+				<strong>@tutoringExperience.getSubjects</strong><br>
+				@tutoringExperience.getStudyLevel</p>		
+			}
+		
+		}
+	</div>
+
+	<!-- Edit content -->
+	<div class="group-editable">
+	
+		@floatingLabelsFormContainer() {
+		
+			<div class="hide form-group-template">
+				@tutoringExperienceGroup(form, "tutoringExperienceTemplate[0]")
+			</div>
+
+			<div class="form-group-container">
+			
+				@repeat(form("tutoringExperience"), 0) { tutoringExperienceField =>
+					@tutoringExperienceGroup(form, tutoringExperienceField.name.toString)
+				}
+				
+			</div>
+			
+			<div class="form-field field-action">
+				<div class="field-group">
+
+					<div class="button-group text-left">
+
+						@defaultFormButton(label = Messages("tutoringexperience.add"), classes = Array("action-add", "button"), isSubmit = false)
+
+					</div>
+
+				</div>
+			</div>
+
+			@blockContainer(id = "global-error-message-tutoringexperience")(HtmlFormat.empty)
+
+			@cancelAndSaveButtons()
+
+		}
+
+	</div>
+	<!-- /Edit content -->
+
+	@editButton()
+
+</div>

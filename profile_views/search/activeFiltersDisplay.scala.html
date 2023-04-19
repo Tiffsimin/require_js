@@ -1,0 +1,97 @@
+@import models.user.ProfileSearchVM
+@import com.kanooba.core.user.TutorSearchQuery
+@import com.kanooba.core.education.SubjectRepository
+@import com.kanooba.core.education.UniversityRepository
+@import com.kanooba.core.education.StudyLevelRepository
+@import com.kanooba.core.util.persistence.ReferenceDataRepository
+@import com.kanooba.core.user.Gender
+
+@(model: ProfileSearchVM)
+
+@printSelectedItem(filterName: String, filterValue: Integer, label: String) = {
+	<li>
+		<a href="#" class="active-filter" data-knb-filter-name="@filterName" data-knb-filter-value="@filterValue">
+			<span class="label">@label</span>
+			<i class="icon icon-x" aria-hidden="true"></i>
+		</a>
+	</li>
+}
+
+@if(model.query.hasActiveFilters) {
+
+<!-- Filter: Selection -->
+<div id="profile-search-active-filters" class="filter-selection">
+
+	<span class="filter-label">@Messages("profile.search.filters.yourselection"):</span>
+
+	<ul class="list-selection">
+	
+		@if(model.query.districtIds != null) {
+			@model.query.districtIds.map { id =>
+				@defining(model.locationProvider.getDistrictById(id)) { district =>
+					@if(district != null) {
+						@printSelectedItem("districtIds", id, district.getName.get)
+					}
+				}
+		    }	
+		}
+	
+		@if(model.query.tutoredSubjectIds != null) {
+			@model.query.tutoredSubjectIds.map { id =>
+				@if(model.subjectRepository.isExistingId(id)) {
+					@printSelectedItem("tutoredSubjectIds", id, model.subjectRepository.getById(id).getName.get)
+				}
+		    }	
+		}
+		
+		@if(model.query.universityIds != null) {
+			@model.query.universityIds.map { id =>
+				@if(model.universityRepository.isExistingId(id)) {
+					@printSelectedItem("universityIds", id, model.universityRepository.getById(id).getName.get)
+				}
+		    }	
+		}
+		
+		@if(model.query.studyLevelIds != null) {
+			@model.query.studyLevelIds.map { id =>
+				@if(model.studyLevelRepository.isExistingId(id)) {
+					@printSelectedItem("studyLevelIds", id, model.studyLevelRepository.getById(id).getName.get)
+				}
+		    }	
+		}
+		
+		@if(model.query.skillLevelId != null) {
+			@if(model.skillLevelRepository.isExistingId(model.query.skillLevelId)) {
+				@printSelectedItem("skillLevelId", model.query.skillLevelId, model.skillLevelRepository.getById(model.query.skillLevelId).getName.get)
+			}
+		}
+		
+		@if(model.query.minHourlyRate != null && model.query.maxHourlyRate != null) {
+			@printSelectedItem("priceRange", 0, model.query.minHourlyRate + " - " + model.query.maxHourlyRate + " 元/h")
+		} else {
+			@if(model.query.minHourlyRate != null) {
+				@printSelectedItem("priceRange", 0, " > " + model.query.minHourlyRate + " 元/h")
+			} else {
+				@if(model.query.maxHourlyRate != null) {
+					@printSelectedItem("priceRange", 0, " < " + model.query.maxHourlyRate + " 元/h")
+				}
+			}
+		}
+		
+		@if(model.query.genderId != null) {
+			@if(Gender.fromId(model.query.genderId) != null) {
+				@printSelectedItem("genderId", model.query.genderId, Messages(Gender.fromId(model.query.genderId).getLocalizationKey))
+			}
+		}
+	    
+	</ul>
+	
+	<a href="#" class="clear-selection">
+		<span class="label">@Messages("profile.search.filters.clear")</span>
+		<i class="icon icon-x" aria-hidden="true"></i>
+	</a>		
+
+</div>
+<!-- /Filter: Selection -->
+
+}

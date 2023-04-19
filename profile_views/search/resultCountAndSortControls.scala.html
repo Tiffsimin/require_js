@@ -1,0 +1,46 @@
+@import models.user.ProfileSearchVM
+@import com.kanooba.core.user.TutorSearchQuery
+@import com.kanooba.core.util.query.SearchResult
+@import com.kanooba.core.user.TutorSearchResultEntry
+@import com.kanooba.core.user.TutorSearchQuery.TutorSearchSortField
+@import com.kanooba.core.util.query.SortOrder
+
+@(model: ProfileSearchVM)
+
+<!-- Listing controls -->
+<div class="listing-controls sort-controls">
+
+<div class="control-info">
+	@if(model.result.getTotalEntryCount == 0) {
+		<p>@Messages("profile.search.noresultsfound")</p>
+		<p>@Messages("profile.search.tryotherselections")</p>
+	} else {
+		<p>@Html(Messages("profile.search.resultcount", model.result.getTotalEntryCount))</p>		
+	}
+</div>
+
+@if(model.result.getTotalEntryCount > 0) {
+@defining(if(model.query.sortInfo != null && model.query.sortInfo.fields != null && !model.query.sortInfo.fields.isEmpty) model.query.sortInfo.fields.get(0) else null) { sortField =>
+<div class="control-group">
+	<div class="form-field field-select hide-label">
+		<div class="field-label">
+			<label for="sort-by">@Messages("sortby")</label>
+		</div>
+		<div class="field-group">
+			<div class="select-group">
+				<select id="profile-search-sort-by" style="width: 100%">
+					<option value="">@Messages("selectsortorder")</option>
+					@for(searchSortField <- TutorSearchSortField.values()) {
+						<option value="@(searchSortField.name)" @if(sortField != null && sortField.field == searchSortField && sortField.order == SortOrder.ASC) {selected="selected"}>▲ @Messages(searchSortField.getLocalizationKey)</option>
+						<option value="-@(searchSortField.name)" @if(sortField != null && sortField.field == searchSortField && sortField.order == SortOrder.DESC) {selected="selected"}>▼ @Messages(searchSortField.getLocalizationKey)</option>
+					}
+				</select>
+			</div>
+		</div>
+	</div>
+</div>
+}
+}
+
+</div>
+<!-- /Listing controls -->

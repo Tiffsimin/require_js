@@ -1,0 +1,103 @@
+@import models.user.ProfileSearchVM
+@import kui.form.filter._
+@import com.kanooba.core.education.Subject
+@import com.kanooba.core.education.UniversityRepository
+@import com.kanooba.core.education.StudyLevelRepository
+@import com.kanooba.core.user.TutorSearchQuery
+@import com.kanooba.core.user.Gender
+@import com.kanooba.core.user.TutorType
+
+@(model: ProfileSearchVM)
+
+<!-- Type: Selector -->
+<div class="type-selector">
+	<div class="toggle-button-group">
+		@for(tutorType <- TutorType.values()) {<a href="@routes.ProfileController.showTutorSearch()?filter=tutorTypeId%3A%3A@tutorType.getId" class="button @if(tutorType.getId == model.query.tutorTypeId){active}" data-knb-tutor-type-id="@tutorType.getId"><span class="label">@Messages(tutorType.getLocalizationKey)</span></a>}
+	</div>
+</div>
+<!-- /Type: Selector -->
+
+<!-- Filter: Group -->
+<div class="filter-group">
+
+	<!-- Group: Priority -->
+	<div class="group group-priority">
+
+		@defining(model.locationProvider.getDefaultLocality) { defaultLocality =>
+	
+			@if(defaultLocality != null) {
+			
+				@multiValueFilter(name = "districtIds", label = Messages("district"), 
+					options = model.locationProvider.getDistrictsByLocalityAndLanguage(defaultLocality.getId).map(s => s.getId -> s.getName.get).toSeq,
+					values = model.query.districtIds,
+					showSearchBox = true
+				)
+				
+			}
+			
+		}
+
+		@defining(if(model.query.tutorTypeId == TutorType.CHINESE_ACADEMIC.getId) {Messages("subject")} else {Messages("language")}) { label =>
+			
+			@multiValueFilter(name = "tutoredSubjectIds", label = label, 
+				options = model.subjects.map(s => s.getId -> s.getName.get).toSeq,
+				values = model.query.tutoredSubjectIds,
+				showSearchBox = true
+			)
+			
+		}
+		
+		@if(model.query.tutorTypeId == TutorType.CHINESE_ACADEMIC.getId) {
+		
+			@multiValueFilter(name = "universityIds", label = Messages("university"), 
+				options = model.universityRepository.getAllSortedByName.map(u => u.getId -> u.getName.get).toSeq,
+				values = model.query.universityIds,
+				showSearchBox = true
+			)
+			
+			@multiValueFilter(name = "studyLevelIds", label = Messages("studylevel"), 
+				options = model.studyLevelRepository.getValidPersonalLevelsForChineseAcademicTutors.map(s => s.getId -> s.getName.get).toSeq,
+				values = model.query.studyLevelIds,
+				showSearchBox = false
+			)
+			
+		} else {
+		
+			@singleValueFilter(name = "skillLevelId", label = Messages("language.proficiency"), 
+				options = Seq(
+					Integer.valueOf(0) -> Messages("language.proficiency.all"),
+					model.skillLevelRepository.getNativeSkillLevel.getId -> Messages("language.proficiency.nativeonly")
+				),
+				value = model.query.skillLevelId,
+				showSearchBox = false
+			)
+		
+		}
+		
+	</div>
+	<!-- /Group: Priority -->
+
+	<!-- Action switcher -->
+	<a href="#" class="text-separator action-switcher action-closed">
+		<span class="left-stroke"></span>
+		@Messages("morefilters") <span class="icon"></span>
+		<span class="left-stroke"></span>
+	</a>
+	<!-- /Action switcher -->
+
+	<!-- Group: Advanced -->
+	<div class="group group-advanced is-closed">
+	
+		@priceRangeFilter(model)
+
+		@singleValueFilter(name = "genderId", label = Messages("gender"), 
+			options = Gender.values().map(g => Integer.valueOf(g.getId) -> Messages(g.getLocalizationKey)).toSeq,
+			value = model.query.genderId,
+			showSearchBox = false
+		)
+
+	</div>
+	<!-- /Group: Advanced -->
+
+</div>
+<!-- /Filter: Group -->

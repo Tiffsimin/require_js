@@ -1,0 +1,24 @@
+@import models.user.ProfileEditorVM
+@import kui.modal._
+@import kui.form.container._
+@import kui.form.checkbox._
+
+@(form: Form[ProfileEditorVM])
+
+@defaultModal(id = "modal-profile-editor-tutored-subjects", title = "", hideHeader = true,
+	modalClasses = Array("modal-profile-edit"), containerClasses = Array("style-narrow", "style-invert")
+	) {
+	
+	<h2 class="modal-title">@Messages("tutoredsubjects")</h2>
+
+	@floatingLabelsFormContainer() {
+					
+		@multiLevelCheckboxButtonGroup(form("tutoredSubjectIds"), items = form.get.subjectItems)
+		
+		@blockContainer(id = "global-error-message-tutored-subjects")(HtmlFormat.empty)
+			
+		@cancelAndSaveButtons()	
+	
+	}	
+		
+}
