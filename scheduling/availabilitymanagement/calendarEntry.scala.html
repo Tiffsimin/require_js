@@ -1,0 +1,3 @@
+@(entry: com.kanooba.core.scheduling.AvailabilityEntry)
+
+<a data-knb-availability-id="@entry.getAvailabilityId" href="#modal-manage-availability" class="meta-entry" title="Edit Availability: @entry.getStart.toLocalTime.toString - @entry.getEnd.toLocalTime.toString">@entry.getStartEndTimeStringDisplay()</a>

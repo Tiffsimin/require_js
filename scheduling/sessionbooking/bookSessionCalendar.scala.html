@@ -1,0 +1,74 @@
+@import models.util.DateUtil
+@import java.time.LocalDate
+@import java.time.YearMonth
+@import com.kanooba.core.user.Tutor
+@import java.time.LocalDate
+@import java.util.List
+@import com.kanooba.core.util.time.CalendarUtil.YearMonthDescriptor
+@import com.kanooba.core.scheduling.BookableEntry
+@import com.kanooba.core.scheduling.SchedulingConfig
+@import tag._
+@import models.util.LinkSpec
+@import common.button._
+@import models.util.RequestContext
+@import common.modal._
+@import models.util.UrlUtil
+
+@(tutor: Tutor, yearMonthDescriptor: YearMonthDescriptor, dateToEntriesMap: Map[LocalDate, List[BookableEntry]], schedulingConfig: SchedulingConfig, backAction: LinkSpec)
+
+@createDateToHtmlEntriesMap(dateToEntriesMap: Map[LocalDate, List[BookableEntry]]) = @{
+	dateToEntriesMap.map{ case (date, entries) => (date, entries.map(entry => calendarEntry(entry))) }
+}
+
+@modals = {
+	@bookSessionModal(schedulingConfig)
+}
+
+@layout.defaultLayout(documentTitle = "pagetitle.scheduling.booksession", 
+	pageClasses = Array("page-availability"), 
+	pageScripts = Array("app/scheduling/sessionbooking/manageSessionBookingController"),
+	modals = modals) {
+	
+	@containerTopBackAction(href = backAction.href, label = backAction.label)
+	
+	<!-- Block: Main -->
+	<div class="block-main style-invert">
+		<div class="container">
+
+			<!-- Main content -->
+			<section class="main-content" role="main">
+			
+				<div id="tutor-data" class="hide" data-knb-min-lesson-duration="@tutor.getMinimumLessonDuration.toString"></div>
+				
+				@defining(if(yearMonthDescriptor.yearMonth.minusMonths(1).isBefore(DateUtil.getCurrentYearMonth())) "" 
+					else UrlUtil.appendDefaultSearchQueryAndOriginStringParameters(request, routes.SchedulingController.showSessionBookingCalendar(tutor.getId, yearMonthDescriptor.yearMonth.minusMonths(1).toString).url)) { previousHref =>
+					
+					@defining(if(yearMonthDescriptor.yearMonth.plusMonths(1).isAfter(DateUtil.getCurrentYearMonth().plus(schedulingConfig.getBookableWindowPeriod()))) "" 
+						else UrlUtil.appendDefaultSearchQueryAndOriginStringParameters(request, routes.SchedulingController.showSessionBookingCalendar(tutor.getId, yearMonthDescriptor.yearMonth.plusMonths(1).toString).url)) { nextHref =>
+										
+						@kui.time.calendarFull(yearMonthDescriptor, createDateToHtmlEntriesMap(dateToEntriesMap), "#modal-book-session", 
+							startMonthFromToday = true, previousHref = previousHref, nextHref = nextHref, hint = Messages("calendar.sessionbooking.hint")) {
+							<div class="profile-info">
+								<a href="@backAction.href">
+									<span class="avatar avatar-rounded avatar-mask-white avatar-small">
+										<span class="mask-placeholder"></span>
+										<img src="@tag.url.avatarSmallUrl(tutor.getProfilePicture)" class="avatar-image" alt="@tutor.getDisplayName">
+									</span>
+									<h2>@tutor.getDisplayName</h2>
+								</a>
+								@sendMessageButton(tutor.getId, tutor.getTutorType)
+							</div>	
+						}						
+					}					
+				}
+
+			
+
+			</section>
+			<!-- /Main content -->
+
+		</div>
+	</div>
+	<!-- /Block: Main -->
+	
+}
