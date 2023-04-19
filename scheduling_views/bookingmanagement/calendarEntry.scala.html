@@ -1,0 +1,39 @@
+@import com.kanooba.core.scheduling.BookingEntry
+@import com.kanooba.core.scheduling.BookingStatus
+
+@(entry: BookingEntry)
+
+
+	@if(entry.getStatus == BookingStatus.REQUESTING) {
+		<a href="#modal-manage-booking" class="meta-booking is-requested"
+		 data-knb-booking-conversation-id="@entry.getConversationId"
+         data-knb-sender-id="@entry.getLastMessageSenderId"
+         data-knb-display-name="@entry.getDisplayName"
+         data-knb-profile-picture="@entry.getProfilePicture">
+			<strong> @entry.getDisplayName</strong>
+			@entry.getStartTime.toString - @entry.getEndTime.toString
+		</a>
+	} 
+	
+	@if(entry.getStatus == BookingStatus.CANCELLING) {
+		<a href="#modal-manage-booking" class="meta-booking is-cancelled"
+		data-knb-booking-conversation-id="@entry.getConversationId"
+         data-knb-sender-id="@entry.getLastMessageSenderId"
+         data-knb-display-name="@entry.getDisplayName"
+         data-knb-profile-picture="@entry.getProfilePicture">
+			<strong> @entry.getDisplayName </strong>
+			@entry.getStartTime.toString - @entry.getEndTime.toString
+		</a>
+	} 
+	
+	@if(entry.getStatus == BookingStatus.SCHEDULED) {
+		<a href="#modal-manage-booking" class="meta-booking is-confirmed"
+		data-knb-booking-conversation-id="@entry.getConversationId"
+         data-knb-sender-id="@entry.getLastMessageSenderId"
+         data-knb-display-name="@entry.getDisplayName"
+         data-knb-profile-picture="@entry.getProfilePicture">
+			<strong> @entry.getDisplayName </strong>
+			@entry.getStartTime.toString - @entry.getEndTime.toString
+		</a>
+	}
+

@@ -1,0 +1,43 @@
+@import modalcomponent._
+
+@()
+
+@kui.modal.defaultModal(id = "modal-manage-booking", title = "scheduling.bookingmanagement",
+	modalClasses = Array("modal-booking-entry", "style-width-small"), containerClasses = Array("style-narrow")) {
+	
+	<!-- Form container -->
+	<div class="form-container side-labels style-separators">
+
+		@userInfoModalComponent()
+
+		@dateTimeModalComponent()
+
+		@locationModalComponent()
+      
+	    @notesDisplayModalComponent()
+	    
+		<div id="response-div">	
+			<span class="shadow-separator"></span>
+	
+			@noteInputModalComponent()
+	
+			@actionButtonsComponent(id = "booking-request-button-container") {
+				@kui.form.button.defaultFormButton(label = "decline", icon = "icon-x-bold", classes = Array("button", "button-danger"), id = "button-booking-request-decline")
+				@kui.form.button.defaultFormButton(label = "accept", icon = "icon-check-bold", classes = Array("button", "button-success", "position-right"), id = "button-booking-request-accept")
+			}
+			
+			@actionButtonsComponent(id = "cancellation-response-button-container") {
+				@kui.form.button.defaultFormButton(label = "accept", icon = "icon-check-bold", classes = Array("button", "button-success", "position-right"), id = "button-cancellation-response-accept")
+			}
+			
+			@actionButtonsComponent(id = "cancellation-request-button-container") {
+				@kui.form.button.defaultFormButton(label = "cancelsession", icon = "icon-x-bold", classes = Array("button", "button-danger"), id = "button-cancellation-request")
+			}
+			
+		</div>
+		
+
+	</div>
+	<!-- /Form container -->
+	
+}

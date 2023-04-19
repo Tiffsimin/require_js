@@ -1,0 +1,26 @@
+@import kui.form.container._
+
+@()
+
+@kui.modal.defaultModal(id = "modal-delete-availability", title = "scheduling.availabilitymanagement.delete",
+	modalClasses = Array("modal-calendar-entry-confirmation")) {
+	<div class="text-center">
+
+		<p>@Messages("scheduling.delete.availability.msg")</p>
+
+	</div>
+	
+	@blockContainer(id = "global-error-message")(HtmlFormat.empty)
+
+	<div class="button-group text-center">
+
+		<a id="button-delete-future" href="#"class="button button-danger">
+			<span class="label">@Messages("scheduling.delete.availability.allfuture")</span>
+		</a>
+
+		<a id="button-delete-single" href="#" class="button button-danger">
+			<span class="label">@Messages("scheduling.delete.availability.single")</span>
+		</a>
+
+	</div>
+}

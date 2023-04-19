@@ -1,0 +1,8 @@
+@(entry: com.kanooba.core.scheduling.BookableEntry)
+
+<a href="#modal-book-session" class="meta-entry" 
+data-knb-session-start="@entry.getStart.toLocalTime"
+data-knb-session-end="@entry.getEnd.toLocalTime"
+data-knb-session-tutor-id="@entry.getTutorId"
+title="Edit entry: @entry.getStart.toLocalTime.toString - @entry.getEnd.toLocalTime.toString">
+@entry.getStartEndTimeStringDisplay()</a>

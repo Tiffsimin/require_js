@@ -1,0 +1,84 @@
+@import models.util.DateUtil
+@import java.time.LocalDate
+@import java.time.YearMonth
+@import java.util.List
+@import com.kanooba.core.util.time.CalendarUtil.YearMonthDescriptor
+@import com.kanooba.core.scheduling.BookingEntry
+@import com.kanooba.core.scheduling.SchedulingConfig
+@import models.util.LinkSpec
+
+@(yearMonthDescriptor: YearMonthDescriptor, dateToEntriesMap: Map[LocalDate, List[BookingEntry]], entries:List[BookingEntry],
+confirmedEntries:List[BookingEntry], pendingEntries:List[BookingEntry], schedulingConfig: SchedulingConfig)
+
+@createDateToHtmlEntriesMap(dateToEntriesMap: Map[LocalDate, List[BookingEntry]]) = @{
+	dateToEntriesMap.map{ case (date, entries) => (date, entries.map(entry => calendarEntry(entry))) }
+}
+
+@modals = {
+	@manageBookingModal()
+	@cancelBookingModal()
+}
+
+@layout.defaultLayout(documentTitle = "pagetitle.scheduling.managebooking", 
+	pageClasses = Array("page-booking"), 
+	pageScripts = Array("app/scheduling/bookingmanagement/bookingManagementController"),
+	modals = modals) {
+	
+	<!-- Block: Main -->
+	<div class="block-main style-invert">
+		<div class="container">
+
+			<!-- Main content -->
+			<section class="main-content" role="main">
+			
+				<!-- Booking dashboard -->
+				<div class="booking-dashboard">
+
+					<!-- Calendar details -->
+					<div class="calendar-details style-normal">
+
+						<div class="group-switcher style-booking is-booking-requested is-opened">
+							<div class="group-title group-action">
+								@Messages("confirmedrequest") <span class="value">@confirmedEntries.size</span>
+							</div>
+							<div class="group-content">
+								@bookingsList(confirmedEntries)
+							</div>
+						</div>
+
+						<div class="group-switcher style-booking is-booking-cancelled is-opened">
+							<button class="group-title group-action">
+								@Messages("pendingrequests") <span class="value">@pendingEntries.size</span>
+							</button>
+							<div class="group-content">
+								@bookingsList(pendingEntries)
+							</div>
+						</div>
+
+					</div>
+					<!-- /Calendar details -->
+					
+				@defining(if(yearMonthDescriptor.yearMonth.minusMonths(1).isBefore(DateUtil.getCurrentYearMonth())) "" 
+					else routes.SchedulingController.showBookingManagementCalendar(yearMonthDescriptor.yearMonth.minusMonths(1).toString).url) { previousHref =>
+					
+					@defining(if(yearMonthDescriptor.yearMonth.plusMonths(1).isAfter(DateUtil.getCurrentYearMonth().plus(schedulingConfig.getBookableWindowPeriod()))) "" 
+						else routes.SchedulingController.showBookingManagementCalendar(yearMonthDescriptor.yearMonth.plusMonths(1).toString).url) { nextHref =>
+						
+						@kui.time.calendarFull(yearMonthDescriptor = yearMonthDescriptor, 
+						dateToHtmlEntriesMap = createDateToHtmlEntriesMap(dateToEntriesMap), calendarClasses = Array("calendar-booking"),startMonthFromToday = true, previousHref = previousHref, nextHref = nextHref) {
+						    <h2>@Messages("scheduling.bookingmanagement.yourbookings")</h2>	
+					    }														
+					}					
+				}				
+
+				</div>
+				<!-- /Booking dashboard -->
+			
+			</section>
+			<!-- /Main content -->
+
+		</div>
+	</div>
+	<!-- /Block: Main -->
+	
+}

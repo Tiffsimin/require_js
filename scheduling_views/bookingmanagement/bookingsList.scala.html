@@ -1,0 +1,23 @@
+@import com.kanooba.core.scheduling.BookingEntry
+@(entries:List[BookingEntry])
+
+<ul class="list-bookings">
+   @for(i<- 0 to  entries.size - 1){
+	<li>
+		<a class="meta-booking" href="#modal-manage-booking" 
+		  data-knb-booking-conversation-id="@entries.get(i).getConversationId"
+         data-knb-sender-id="@entries.get(i).getLastMessageSenderId"
+         data-knb-display-name="@entries.get(i).getDisplayName"
+         data-knb-profile-picture="@entries.get(i).getProfilePicture">
+			<span class="avatar avatar-rounded avatar-mask-color-requested avatar-extra-small">
+				<span class="mask-placeholder"></span>
+				<img src="@tag.url.avatarSmallUrl(entries.get(i).getProfilePicture)" class="avatar-image" alt="@entries.get(i).getDisplayName">
+			</span>
+			<span class="user-name"> @entries.get(i).getDisplayName</span>
+			@entries.get(i).getDate.toString <br>
+			@entries.get(i).getStartTime.toString - @entries.get(i).getEndTime.toString
+		</a>
+	</li>
+	}
+
+</ul>

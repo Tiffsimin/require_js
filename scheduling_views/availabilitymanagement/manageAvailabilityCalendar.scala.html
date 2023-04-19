@@ -1,0 +1,54 @@
+@import models.util.DateUtil
+@import java.time.LocalDate
+@import java.time.YearMonth
+@import java.util.List
+@import com.kanooba.core.util.time.CalendarUtil.YearMonthDescriptor
+@import com.kanooba.core.scheduling.AvailabilityEntry
+@import com.kanooba.core.scheduling.SchedulingConfig
+
+@(yearMonthDescriptor: YearMonthDescriptor, dateToEntriesMap: Map[LocalDate, List[AvailabilityEntry]], schedulingConfig: SchedulingConfig)
+
+@createDateToHtmlEntriesMap(dateToEntriesMap: Map[LocalDate, List[AvailabilityEntry]]) = @{
+	dateToEntriesMap.map{ case (date, entries) => (date, entries.map(entry => calendarEntry(entry)))
+    }
+}
+
+@modals = {
+	@manageAvailabilityModal(schedulingConfig)
+	@confirmAvailabilityDeletionModal()
+	@confirmSingleAvailabilityDeletionModal()
+}
+
+@layout.defaultLayout(documentTitle = "pagetitle.scheduling.manageavailability", 
+	pageClasses = Array("page-availability"), 
+	pageScripts = Array("app/scheduling/availabilitymanagement/manageAvailabilityController"),
+	modals = modals) {	
+	<!-- Block: Main -->
+	<div class="block-main style-invert">
+		<div class="container">
+			<!-- Main content -->
+			<section class="main-content" role="main">			
+				@defining(if(yearMonthDescriptor.yearMonth.minusMonths(1).isBefore(DateUtil.getCurrentYearMonth())) "" 
+					else routes.SchedulingController.showAvailabilityManagementCalendar(yearMonthDescriptor.yearMonth.minusMonths(1).toString).url)
+					 { 
+						previousHref => @defining(
+							 if(yearMonthDescriptor.yearMonth.plusMonths(1).isAfter(DateUtil.getCurrentYearMonth()
+							.plus(schedulingConfig.getBookableWindowPeriod()))) "" 
+							else routes.SchedulingController.showAvailabilityManagementCalendar(yearMonthDescriptor.yearMonth.plusMonths(1).toString).url)
+							 { nextHref => @kui.time.calendarFull(yearMonthDescriptor = yearMonthDescriptor, 
+											  dateToHtmlEntriesMap = createDateToHtmlEntriesMap(dateToEntriesMap), 
+							                  dayCellHref = "#modal-manage-availability", 
+											  dayCellTitle = "addnewavailability", 
+											  startMonthFromToday = true, 
+							                  previousHref = previousHref, 
+											  nextHref = nextHref, 
+											  hint = Messages("calendar.availability.hint")) 
+								  {
+									  <h2>@Messages("calendar.availability.title")</h2>	
+								   }
+							}
+						}
+			</section>
+		</div>
+	</div>
+}
