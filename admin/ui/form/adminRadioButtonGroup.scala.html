@@ -1,0 +1,28 @@
+@import admin.tag._
+
+@(name: String, options: Seq[(String,String)], args: (Symbol,Any)*)
+
+@defining(args.toMap) {argsMap =>
+
+<div class="form-group p-l-10 @argsMap.get('formGroupClasses).getOrElse("").toString">
+
+@if(argsMap.containsKey('label)) {
+	<label class="control-label">@argsMap.get('label).get</label>
+}
+
+	<div class="radio radio-primary">
+		@options.map { v =>
+		    <input class="@argsMap.get('inputClasses).getOrElse("").toString" type="radio" value="@v._1" name="@name" id="@(name)_@v._1" @if(argsMap.containsKey('value) && argsMap.get('value).getOrElse("").toString == v._1){checked="checked"}>
+		    <label for="@(name)_@v._1">@v._2</label>
+	    }
+	</div>
+
+</div>
+
+@requirejs() {
+  	requirejs(['app/util/adminFormUtil'], function (adminFormUtil) {
+		adminFormUtil.initializeRadioButtonGroup('@name');
+	});
+}
+
+}

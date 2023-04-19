@@ -1,0 +1,233 @@
+@import com.kanooba.core.user.Gender
+@import admin.ui.form._
+@import admin.ui.location._
+
+@printPersonalData(showExtendedFields: Boolean = false) = {
+	@adminTextOutput("id", Messages("user.id"))
+	@adminTextOutput("displayName", Messages("displayname"))
+	@adminTextOutput("email", Messages("email.abbrev"))
+	@adminTextOutput("phoneNumber", Messages("phonenumber.abbrev"))
+	@adminTextOutput("nationality.name", Messages("nationality"))
+	@adminDateOutput("creationDateTime", Messages("user.registered"))
+	@adminDateOutput("initialCallDateTime", Messages("called"))
+	@if(showExtendedFields) {
+		<dl>
+			<dt>@Messages("admin.users.verification.interview")</dt>
+			<dd class="interviewDateTimeLocation"></dd>
+		</dl>
+	}
+}
+
+<!-- START USER VERIFICATION MODAL -->
+<div class="modal fade" id="modal-user-verification" tabindex="-1" role="dialog" aria-hidden="false">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content-wrapper">
+      <div class="modal-content">
+        <div class="modal-header clearfix text-left">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="panel">
+		    <ul class="nav nav-tabs nav-tabs-fillup" role="tablist" data-init-reponsive-tabs="collapse">
+		      <li class="active"><a href="#tab-initial-call" data-toggle="tab" role="tab"><i class="fa fa-phone p-r-5"></i> @Messages("admin.users.verification.initialcall")</a>
+		      </li>
+		      <li><a href="#tab-interview" data-toggle="tab" role="tab"><i class="fa fa-calendar p-r-5"></i> @Messages("admin.users.verification.interview")</a>
+		      </li>
+		      <li><a href="#tab-document-retrieval" data-toggle="tab" role="tab"><i class="fa fa-folder-open p-r-5"></i> @Messages("admin.users.verification.documentretrieval")</a>
+		      </li>
+		    </ul>
+		    <div class="tab-content">
+		      <div class="tab-pane active" id="tab-initial-call">
+		      	<form id="form-initial-call" role="form">
+		      	<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("personaldata")</h3>
+	              <div class="tab-section-content">
+					  <div class="dl-float-horizontal">
+						@printPersonalData()
+					  </div>
+					  <div class="clearfix"></div>
+				  </div>
+				</div>
+				<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("nativetongues")</h3>
+	              <div class="tab-section-content nativeTongues">
+
+				  </div>
+				</div>
+				<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("questions")</h3>
+	              <div class="tab-section-content">
+					<ul>
+						<li>@Messages("questions.holdingvalidvisa")</li>
+					</ul>
+				  </div>
+				</div>
+				<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("admin.users.verification.interview")</h3>
+	              <div class="tab-section-content">
+	              	<div class="row">
+				        <div class="col-sm-6">
+				        	@adminDatePicker("interviewDate", Messages("date"), 'inputClasses -> "validation-group-interview-dtl", 'startDate -> "new Date()")
+				        </div>
+				        <div class="col-sm-6">
+				        	@adminTimePicker("interviewTime", Messages("time"), 'inputClasses -> "validation-group-interview-dtl")
+				        </div>
+				    </div>
+				    @adminTextInput("interviewLocation", Messages("location"), 'inputClasses -> "validation-group-interview-dtl")
+				  </div>
+				</div>
+				<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("notes")</h3>
+	              <div class="tab-section-content">
+		            @adminTextArea("initialCallNotes", 'placeholder -> Messages("admin.users.verification.initialcall.notes.placeholder"))
+				  </div>
+				</div>
+				@adminGlobalFormErrorDisplay()
+				<div class="row">
+                  <div class="col-sm-offset-8 col-sm-4 m-t-10 sm-m-t-10">
+                  	@adminPrimaryButton(Messages("save"), classes = "m-t-5", isSubmit = true)
+                  </div>
+                </div>
+                </form>
+		      </div>
+		      <div class="tab-pane " id="tab-interview">
+				<form id="form-interview" role="form">
+		      	<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("personaldata")</h3>
+	              <div class="tab-section-content">
+					  <div class="dl-float-horizontal">
+						@printPersonalData(true)
+					  </div>
+					  <div class="clearfix"></div>
+				  </div>
+				</div>
+				<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("user.generalinformation")</h3>
+	              <div class="tab-section-content">
+	              	<div class="row">
+				        <div class="col-sm-6">
+				        	@adminRadioButtonGroup(
+				        		"gender", 
+				        		options = Gender.values().map(g => g.getId.toString -> Messages(g.getLocalizationKey)).toSeq, 
+				        		'label -> Messages("gender"),
+				        		'formGroupClasses -> "required")
+				        </div>
+				    </div>
+	              	<div class="row">
+				        <div class="col-sm-6">
+				        	@adminUserAutoCompleteInput("referringUserId", Messages("referringuserid"))
+				        </div>
+				        <div class="col-sm-6">
+				        	@adminDatePicker("expiryDateTime", Messages("accountexpiry"), 'startDate -> "new Date()")
+				        </div>
+				    </div>
+				    @adminAddressSelectorWidget()
+				  </div>
+				</div>
+				<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("tutoring")</h3>
+	              <div class="tab-section-content">
+	              	<div class="row">
+				        <div class="col-sm-6">
+				        	@adminTextInput(
+				        		"hourlyRate", 
+				        		Messages("hourlyrate"),
+				        		'formGroupClasses -> "required")
+				        </div>
+				        <div class="col-sm-6">
+				        	@adminTextInput(
+				        		"paymentMethod", 
+				        		Messages("paymentmethod"),
+				        		'formGroupClasses -> "required")
+				        </div>
+				    </div>
+	              	<div class="row">
+				        <div class="col-sm-6">
+				        	@adminRangeSelect(
+				        		"minimumGroupSize", 
+				        		"maximumGroupSize", 
+				        		options = Seq(
+				        			("0", Messages("groupsize.none")), 
+				        			("2", "2"), 
+				        			("3", "3"), 
+				        			("4", "4"), 
+				        			("5", "5")), 
+				        		'label -> Messages("groupsize"),
+				        		'startLabel -> Messages("min"),
+				        		'endLabel -> Messages("max"),
+				        		'formGroupClasses -> "required")
+				        </div>
+				    </div>
+				  </div>
+				</div>
+				<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("notes")</h3>
+	              <div class="tab-section-content">
+	              	@adminTextArea("generalNotes", 'placeholder -> Messages("admin.users.verification.interview.notes.placeholder"))
+				  </div>
+				</div>
+				@adminGlobalFormErrorDisplay()
+				<div class="row">
+                  <div class="col-sm-offset-8 col-sm-4 m-t-10 sm-m-t-10">
+                    @adminPrimaryButton(Messages("save"), classes = "m-t-5", isSubmit = true)
+                  </div>
+                </div>
+                </form>
+		      </div>
+		      <div class="tab-pane" id="tab-document-retrieval">
+				<form id="form-document-retrieval" role="form">
+		      	<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("personaldata")</h3>
+	              <div class="tab-section-content">
+					  <div class="dl-float-horizontal">
+						@printPersonalData(true)
+					  </div>
+					  <div class="clearfix"></div>
+				  </div>
+				</div>
+				<div class="tab-section">
+	              <h3 class="tab-section-header">@Messages("user.requireddocuments")</h3>
+	              <div class="tab-section-content">
+	              	<div class="row">
+				        <div class="col-sm-12">
+				        	@adminMultiNameCheckboxButtonGroup(
+				        		options = Seq(
+				        			("passportReceptionDateTime", Messages("passport")), 
+				        			("visaReceptionDateTime", Messages("visa"))),
+				        		'label -> Messages("documents"))
+				        </div>
+				    </div>
+				    <div class="row m-t-5">
+				        <div class="col-sm-6">
+							@adminDatePicker(
+								"visaExpiryDateTime", 
+								Messages("visa.expirydate"), 
+								'startDate -> "new Date()")
+				        </div>
+				        <div class="col-sm-6">
+				        	@adminDatePicker(
+				        		"birthDate", 
+				        		Messages("dateofbirth"), 
+				        		'endDate -> "new Date(1999, 11, 31)",
+				        		'formGroupClasses -> "required")
+				        </div>
+				    </div>
+				  </div>
+				</div>
+				@adminGlobalFormErrorDisplay()
+				<div class="row">
+                  <div class="col-sm-offset-8 col-sm-4 m-t-10 sm-m-t-10">
+                    @adminPrimaryButton(Messages("save"), classes = "m-t-5", isSubmit = true)
+                  </div>
+                </div>
+                </form>
+		      </div>
+		    </div>
+		  </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END USER VERIFICATION MODAL -->
