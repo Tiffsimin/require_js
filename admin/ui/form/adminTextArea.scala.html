@@ -1,9 +1,0 @@
-@(name: String, args: (Symbol,Any)*)
-
-@defining(args.toMap) {argsMap =>
-
-<div class="form-group form-group-default @argsMap.get('formGroupClasses).getOrElse("").toString">
-	<textarea placeholder="@argsMap.get('placeholder).getOrElse("").toString" id="@name" name="@name" class="form-control textarea-medium-height @argsMap.get('inputClasses).getOrElse("").toString"></textarea>
-</div>
-
-}
